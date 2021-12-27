@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-cd svelte
-npm run build
-cd ..
+set -e
+
+npm --prefix svelte ci
+npm --prefix svelte run build
 mix run --no-halt

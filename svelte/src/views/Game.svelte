@@ -1,9 +1,7 @@
 <script lang="ts">
-    import Loading from '../components/Loading.svelte'
-    import Button from '../components/Button.svelte'
     import WaitingForPartner from '../components/WaitingForPartner.svelte'
-
-    import { Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'sveltestrap'
+    import Loading from '../components/Loading.svelte'
+    import Modal from '../components/Modal.svelte'
 
     import { GameType, Player } from '../enum'
     import { socket } from '../store'
@@ -12,11 +10,9 @@
     export let createGame: boolean
     export let joinGame: string
 
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
     let player = Player.A
     let me = Player.A
-    
+
     let loading = true
     let guessWordLocked = false
     let waitingForPartner = false
@@ -38,12 +34,8 @@
         }
     }
 
-    const guess = (character: string) => {
-        send({
-            action: 'guess_letter',
-            letter: character
-        })
-    }
+    const guess = (character: string) => send({ action: 'guess_letter', letter: character })
+
     const lockGuessWord = () => {
         guessWordLocked = true
         if (guessWordTimeout) {
@@ -61,9 +53,8 @@
         wordGuess = ''
         lockGuessWord()
     }
-    const newGame = () => {
-        send({ action: 'new_game' })
-    }
+
+    const newGame = () => send({ action: 'new_game' })
 
     $socket.addEventListener('message', ({ data }) => {
         const payload = JSON.parse(data)
@@ -114,60 +105,97 @@
 <style>
     .word {
         letter-spacing: 3px;
+        font-family: monospace;
+        font-size: 64px;
+        color: white;
+    }
+    @media screen and (max-width: 500px) {
+        .word {
+            font-size: 30px;
+        }
     }
     .game {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px;
+    }
+    .hud, .controls {
         display: flex;
         flex-direction: column;
         align-items: center;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
-    .characters {
+    .letters {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        margin: 15px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        max-width: 530px;
+        gap: 10px;
+        padding: 10px;
+    }
+    .letters * {
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+    }
+    .guess-word {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+    .game-controls {
+        display: flex;
+        gap: 5px;
+    }
+    .game-status {
+        font-size: 30px;
+    }
+    .lives {
+        font-size: 14px;
+        color: white;
     }
 </style>
 
 {#if confirmEndGame}
-    <Modal isOpen={true} transitionOptions={{ duration: 100 }}>
-        <ModalHeader>
+    <Modal>
+        <svelte:fragment slot="title">
             {#if gameType === GameType.RemoteMultiplayer}
                 Leave Game
             {:else}
                 End Game
             {/if}
-        </ModalHeader>
-        <ModalBody>
+        </svelte:fragment>
+        <svelte:fragment slot="body">
             Are you sure you want to do this?
-        </ModalBody>
-        <ModalFooter>
-            <Button
+        </svelte:fragment>
+        <svelte:fragment slot="footer">
+            <button
+                class="btn btn-secondary"
                 on:click={() => window.location.reload()}
-                color="secondary"
-            >Yes</Button>
-            <Button
+            >Yes</button>
+            <button
+                class="btn btn-secondary"
                 on:click={() => confirmEndGame = false}
-                color="secondary"
-            >No</Button>
-        </ModalFooter>
+            >No</button>
+        </svelte:fragment>
     </Modal>
 {/if}
 {#if abandoned}
-<Modal isOpen={true} transitionOptions={{ duration: 100 }}>
-    <ModalHeader>Abandoned By Partner</ModalHeader>
-    <ModalBody>Your partner has abandoned the game.</ModalBody>
-    <ModalFooter>
-        <Button
-            on:click={() => window.location.reload()}
-            color="secondary"
-        >Main Menu</Button>
-    </ModalFooter>
-</Modal>
+    <Modal>
+        <svelte:fragment slot="title">Abandoned By Partner</svelte:fragment>
+        <svelte:fragment slot="body">Your partner has abandoned the game.</svelte:fragment>
+        <svelte:fragment slot="footer">
+            <button
+                class="btn btn-secondary"
+                on:click={() => window.location.reload()}
+            >Main Menu</button>
+        </svelte:fragment>
+    </Modal>
 {/if}
 {#if loading}
     <Loading />
@@ -175,72 +203,77 @@
     <WaitingForPartner {gameId} />
 {:else}
     <div class="game">
-        {#if gameType !== GameType.LocalSolo}
-            <span class="h4 text-dark">
-                {#if gameOver}
-                    Game Over
-                {:else}
-                    {#if gameType === GameType.LocalMultiplayer}
-                        {#if player === Player.A}
-                            Player 1's turn
-                        {:else}
-                            Player 2's turn
-                        {/if}
+        <div class="hud">
+            {#if gameType !== GameType.LocalSolo}
+                <span class="game-status text-dark">
+                    {#if gameOver}
+                        Game Over
                     {:else}
-                        {#if player === me}
-                            Your turn
+                        {#if gameType === GameType.LocalMultiplayer}
+                            {#if player === Player.A}
+                                Player 1's turn
+                            {:else}
+                                Player 2's turn
+                            {/if}
                         {:else}
-                            Partner's turn
+                            {#if player === me}
+                                Your turn
+                            {:else}
+                                Partner's turn
+                            {/if}
                         {/if}
                     {/if}
+                </span>
+            {/if}
+            <span class="word">{word}</span>
+            <span class="lives">
+                {#if gameOver && lives}
+                    You win!
+                {:else if gameOver}
+                    You lose!
+                {:else}
+                    Lives Remaining: {lives}
                 {/if}
             </span>
-        {/if}
-        <span class="h1 word">{word}</span>
-        <span class="h6">
-            {#if gameOver && lives > 0}
-                    You win!
-            {:else if gameOver}
-                You lose!
-            {:else}
-                Lives Remaining: {lives}
-            {/if}
-        </span>
-        <div class="characters bg-light rounded">
-            {#each alphabet as letter}
-                <Button
-                    style="margin: 5px; padding: 5px; width: 30px; height: 30px;"
-                    on:click={() => guess(letter)}
-                    disabled={letters.includes(letter) || gameOver || !canMove}
-                >{letter}</Button>
-            {/each}
+            <div class="letters bg-light rounded">
+                {#each 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' as letter}
+                    <button
+                        class="btn btn-secondary"
+                        on:click={() => guess(letter)}
+                        disabled={letters.includes(letter) || gameOver || !canMove}
+                    >{letter}</button>
+                {/each}
+            </div>
         </div>
-        <div class="form-inline" style="margin-bottom: 15px;">
-            <Input
-                style="margin-right: 5px;"
-                placeholder="Guess Word"
-                bind:value={wordGuess}
-                disabled={guessWordLocked || gameOver || !canMove}
-            />
-            <Button
-                disabled={guessWordLocked || gameOver || !canMove}
-                on:click={guessWord}
-            >Guess</Button>
-        </div>
-        <div class="d-flex">
-            {#if gameOver}
-                <Button
-                    style="margin-right: 5px;"
-                    on:click={newGame}
-                >New Game</Button>
-            {/if}
-            <Button on:click={() => confirmEndGame = true}>
-                {#if gameType === GameType.RemoteMultiplayer}
-                    Leave Game
-                {:else}
-                    End Game
+        <div class="controls">
+            <div class="guess-word">
+                <input
+                    class="form-control"
+                    placeholder="Guess Word"
+                    bind:value={wordGuess}
+                    disabled={guessWordLocked || gameOver || !canMove}
+                />
+                <button
+                    class="btn btn-secondary"
+                    disabled={guessWordLocked || gameOver || !canMove}
+                    on:click={guessWord}
+                >Guess</button>
+            </div>
+            <div class="game-controls">
+                {#if gameOver}
+                    <button
+                        class="btn btn-secondary"
+                        on:click={newGame}
+                    >New Game</button>
                 {/if}
-            </Button>
+                <button class="btn btn-secondary" on:click={() => confirmEndGame = true}>
+                    {#if gameType === GameType.RemoteMultiplayer}
+                        Leave Game
+                    {:else}
+                        End Game
+                    {/if}
+                </button>
+            </div>
         </div>
     </div>
 {/if}

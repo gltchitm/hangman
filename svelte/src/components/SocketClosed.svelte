@@ -1,17 +1,21 @@
-<script>
-    import Button from './Button.svelte'
-</script>
 <style>
-    div {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
+    .socket-closed {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .reload-btn {
+        width: 200px;
     }
 </style>
 
-<div>
+<div class="socket-closed">
     <h4>Socket Closed</h4>
-    <Button block on:click={() => window.location.reload()}>Reload</Button>
+    <button
+        class="btn btn-secondary btn-block reload-btn"
+        on:click={() => window.location.reload()}
+    >Reload</button>
 </div>

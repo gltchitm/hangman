@@ -2,21 +2,26 @@
     export let gameId: string
 </script>
 <style>
-    div {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
+    .waiting-for-partner {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
     .unselectable {
         user-select: none;
     }
 </style>
 
-<div>
+<div class="waiting-for-partner">
     <h1 class="unselectable h3">Waiting for Partner</h1>
     <p>
         <strong class="unselectable">Game ID: </strong>{gameId}
     </p>
+    <button
+        class="btn btn-secondary"
+        on:click={() => navigator.clipboard.writeText(gameId)}
+    >Copy</button>
 </div>

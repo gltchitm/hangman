@@ -1,12 +1,6 @@
-/_build/
-/cover/
-/deps/
-/doc/
-/.fetch
-erl_crash.dump
-*.ez
-hangman-*.tar
-/tmp
+deps
+.elixir_ls
+_build
 priv/static
 node_modules
 .DS_Store

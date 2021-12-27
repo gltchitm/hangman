@@ -7,7 +7,7 @@ defmodule Hangman.Application do
                 scheme: :http,
                 plug: Hangman.Router,
                 options: [
-                    port: System.get_env("PORT") || 5522,
+                    port: String.to_integer(System.get_env("PORT", "5522")),
                     dispatch: dispatch()
                 ]
             ),

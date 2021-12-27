@@ -1,9 +1,6 @@
 <script>
-    import { Container } from 'sveltestrap'
     import { createEventDispatcher } from 'svelte'
 
-    import Button from '../components/Button.svelte'
-    
     import { GameType } from '../enum'
 
     const dispatcher = createEventDispatcher()
@@ -11,28 +8,36 @@
     const select = gamemode => () => dispatcher('select', gamemode)
 </script>
 <style>
-    div {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+    .main-container {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .welcome {
+        width: 200px;
+    }
+    .hangman-label {
+        font-size: 40px;
+        text-align: center;
     }
 </style>
 
-<div>
-    <Container class="welcome">
-        <h1 class="h3">Hangman</h1>
-        <Button
+<div class="main-container">
+    <div class="welcome">
+        <h1 class="hangman-label">Hangman</h1>
+        <button
+            class="btn btn-secondary btn-block"
             on:click={select(GameType.LocalSolo)}
-            block
-        >Local Solo</Button>
-        <Button
+        >Local Solo</button>
+        <button
+            class="btn btn-secondary btn-block"
             on:click={select(GameType.LocalMultiplayer)}
-            block
-        >Local Multiplayer</Button>
-        <Button
+        >Local Multiplayer</button>
+        <button
+            class="btn btn-secondary btn-block"
             on:click={select(GameType.RemoteMultiplayer)}
-            block
-        >Remote Multiplayer</Button>
-    </Container>
+        >Remote Multiplayer</button>
+    </div>
 </div>

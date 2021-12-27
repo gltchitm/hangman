@@ -1,6 +1,6 @@
 defmodule Hangman.Router do
     use Plug.Router
-    
+
     plug(:match)
     plug(:dispatch)
 

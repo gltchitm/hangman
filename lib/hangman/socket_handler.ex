@@ -17,7 +17,7 @@ defmodule Hangman.SocketHandler do
                 case payload["action"] do
                     "create_game" ->
                         if valid_game_type(payload["game_type"]) && !Map.has_key?(state, "game_id") do
-                            game_id = UUID.uuid4()
+                            game_id = :crypto.strong_rand_bytes(8) |> Base.encode16
                             word = Hangman.RandWord.rand_word()
                             game_type = String.to_atom(payload["game_type"])
                             :ets.insert(:game_data, {game_id, game_type, word, @lives, [], 0, :a, false})
@@ -96,7 +96,10 @@ defmodule Hangman.SocketHandler do
                         if !is_valid_game_id(game_id) do
                             {:stop, state}
                         else
-                            if game_lives(game_id) <= 0 || Enum.member?(used_letters(game_id), payload["letter"]) do
+                            if game_lives(game_id) <= 0 || Enum.member?(
+                                used_letters(game_id),
+                                payload["letter"]
+                            ) do
                                 {:stop, state}
                             else
                                 lives = if String.contains?(game_word(game_id), payload["letter"]) do

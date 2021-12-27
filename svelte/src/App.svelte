@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'sveltestrap'
-
     import Welcome from './views/Welcome.svelte'
     import Game from './views/Game.svelte'
 
     import SocketClosed from './components/SocketClosed.svelte'
-    import Button from './components/Button.svelte'
+    import Modal from './components/Modal.svelte'
 
     import { GameType } from './enum'
     import { socket } from './store'
@@ -15,7 +13,7 @@
         JoinOrCreateGame,
         Game
     }
-    
+
     let view = View.Welcome
     let showJoinOrCreateGameModal = false
     let showJoinGameModal = false
@@ -65,52 +63,55 @@
     }, 5000)
 </script>
 
-<Modal isOpen={showJoinOrCreateGameModal} transitionOptions={{ duration: 100 }}>
-    <ModalHeader
-        toggle={() => showJoinOrCreateGameModal = false}
-    >Remote Multiplayer</ModalHeader>
-    <ModalFooter>
-        <Button
-            on:click={joinOrCreateGameSelection(true)}
-            color="secondary"
-        >Create Game</Button>
-        <Button
-            on:click={joinOrCreateGameSelection(false)}
-            color="secondary"
-        >Join Game</Button>
-    </ModalFooter>
-</Modal>
-<Modal isOpen={showJoinGameModal} transitionOptions={{ duration: 100 }}>
-    <ModalHeader
-        toggle={() => showJoinGameModal = false}
-    >Remote Multiplayer</ModalHeader>
-    <ModalBody>
-        <FormGroup>
-            <Label>Game ID</Label>
-            <Input bind:value={joinGame} type="text" />
-        </FormGroup>
-    </ModalBody>
-    <ModalFooter>
-        <Button
-            on:click={() => showJoinGameModal = false}
-            color="secondary"
-        >Cancel</Button>
-        <Button
-            on:click={join}
-            color="secondary"
-        >Join</Button>
-    </ModalFooter>
-</Modal>
-<Modal isOpen={showCannotJoinModal} transitionOptions={{ duration: 100 }}>
-    <ModalHeader>Cannot Join Game</ModalHeader>
-    <ModalBody>You may have entered an invalid ID.</ModalBody>
-    <ModalFooter>
-        <Button
-            on:click={() => showCannotJoinModal = false}
-            color="secondary"
-        >Close</Button>
-    </ModalFooter>
-</Modal>
+{#if showJoinOrCreateGameModal}
+    <Modal>
+        <svelte:fragment slot="title">Remote Multiplayer</svelte:fragment>
+        <svelte:fragment slot="body">
+            Create or join game?
+        </svelte:fragment>
+        <svelte:fragment slot="footer">
+            <button
+                class="btn btn-secondary"
+                on:click={joinOrCreateGameSelection(true)}
+            >Create Game</button>
+            <button
+                class="btn btn-secondary"
+                on:click={joinOrCreateGameSelection(false)}
+            >Join Game</button>
+        </svelte:fragment>
+    </Modal>
+{/if}
+{#if showJoinGameModal}
+    <Modal>
+        <svelte:fragment slot="title">Remote Multiplayer</svelte:fragment>
+        <svelte:fragment slot="body">
+            <label for="gameId">Game ID</label>
+            <input class="form-control" id="gameId" type="text" bind:value={joinGame} />
+        </svelte:fragment>
+        <svelte:fragment slot="footer">
+            <button
+                class="btn btn-secondary"
+                on:click={() => showJoinGameModal = false}
+            >Cancel</button>
+            <button
+                class="btn btn-secondary"
+                on:click={join}
+            >Join</button>
+        </svelte:fragment>
+    </Modal>
+{/if}
+{#if showCannotJoinModal}
+    <Modal>
+        <svelte:fragment slot="title">Cannot Join Game</svelte:fragment>
+        <svelte:fragment slot="body">You may have entered an invalid ID.</svelte:fragment>
+        <svelte:fragment slot="footer">
+            <button
+                on:click={() => showCannotJoinModal = false}
+                class="btn btn-secondary"
+            >Close</button>
+        </svelte:fragment>
+    </Modal>
+{/if}
 {#if socketClosed}
     <SocketClosed />
 {:else if view === View.Welcome}
