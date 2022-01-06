@@ -1,5 +1,5 @@
 <style>
-    div {
+    .loading {
         height: 100vh;
         display: flex;
         align-items: center;
@@ -7,6 +7,6 @@
     }
 </style>
 
-<div>
-    <h1>Loading...</h1>
+<div class="loading">
+    <h3>Loading...</h3>
 </div>

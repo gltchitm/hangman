@@ -49,6 +49,7 @@
             if (result) {
                 view = View.Game
             } else {
+                joinGame = ''
                 showJoinGameModal = true
             }
         }
