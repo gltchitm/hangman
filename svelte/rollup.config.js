@@ -14,7 +14,7 @@ export default {
         sourcemap: false,
         format: 'iife',
         name: 'hangman',
-        file: '../priv/static/app.js'
+        file: '../static/app.js'
     },
     plugins: [
         svelte({

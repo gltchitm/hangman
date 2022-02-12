@@ -1,6 +1,12 @@
 deps
 .elixir_ls
 _build
-priv/static
+static/app.css
+static/app.js
 node_modules
 .DS_Store
+
+mix.exs
+mix.lock
+priv
+lib
