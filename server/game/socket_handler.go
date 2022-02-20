@@ -21,7 +21,10 @@ func createUpdatePacket(game *game) clientboundUpdatePacket {
 }
 
 func SocketHandler(writer http.ResponseWriter, request *http.Request) {
-	conn, _ := upgrader.Upgrade(writer, request, nil)
+	conn, err := upgrader.Upgrade(writer, request, nil)
+	if err != nil {
+		panic(err)
+	}
 
 	var game *game
 	var me string
