@@ -134,7 +134,7 @@ func SocketHandler(writer http.ResponseWriter, request *http.Request) {
 				}
 			}
 		case actionGuessLetter:
-			if game.gameType == gameTypeRemote && game.turn != me {
+			if game.gameType == gameTypeRemote && (game.turn != me || game.connPlayerB == nil) {
 				panic("partner's turn")
 			}
 
@@ -157,7 +157,7 @@ func SocketHandler(writer http.ResponseWriter, request *http.Request) {
 				}
 			}
 		case actionGuessWord:
-			if game.gameType == gameTypeRemote && game.turn != me {
+			if game.gameType == gameTypeRemote && (game.turn != me || game.connPlayerB == nil) {
 				panic("partner's turn")
 			}
 
