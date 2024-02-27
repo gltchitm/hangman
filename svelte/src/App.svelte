@@ -34,7 +34,7 @@
         socketClosed = true
     })
 
-    const gametypeSelect = ({ detail }) => {
+    const gametypeSelect = ({ detail }: CustomEvent<GameType>) => {
         gameType = detail
         if (gameType === GameType.RemoteMultiplayer) {
             showJoinOrCreateGameModal = true
