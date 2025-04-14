@@ -14,6 +14,7 @@ const (
 	messageWaitForPartner = "wait_for_partner"
 	messageCannotJoinGame = "cannot_join_game"
 	messageAbandoned      = "abandoned"
+	messageLockGuessWord  = "lock_guess_word"
 )
 
 type serverboundPacket struct {
@@ -34,6 +35,8 @@ type serverboundPacket struct {
 	// rematch
 
 	// ping
+
+	// lock_guess_word
 }
 
 type clientboundUpdatePacket struct {
@@ -58,5 +61,9 @@ type clientboundCannotJoinGamePacket struct {
 }
 
 type clientboundAbandonedPacket struct {
+	Message string `json:"message"`
+}
+
+type clientboundLockGuessWordPacket struct {
 	Message string `json:"message"`
 }

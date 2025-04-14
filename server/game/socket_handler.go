@@ -174,6 +174,13 @@ func SocketHandler(writer http.ResponseWriter, request *http.Request) {
 			}
 
 			if game.connPlayerB != nil {
+				err = game.connPlayerB.WriteJSON(clientboundLockGuessWordPacket{
+					Message: messageLockGuessWord,
+				})
+				if err != nil {
+					panic(err)
+				}
+
 				err = game.connPlayerB.WriteJSON(updatePacket)
 				if err != nil {
 					panic(err)
